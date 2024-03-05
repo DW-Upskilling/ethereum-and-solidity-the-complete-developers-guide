@@ -3,8 +3,8 @@ const ganache = require('ganache');
 const { Web3 } = require('web3');
 const { interface, bytecode } = require('../compile').contracts[':Inbox'];
 
-const INITIAL_MESSAGE = 'Hello World!';
-const UPDATE_MESSAGE = 'Hello Universe!';
+const INITIAL_MESSAGE = process.env.INITIAL_MESSAGE;
+const UPDATE_MESSAGE = process.env.UPDATE_MESSAGE;
 
 const web3 = new Web3(ganache.provider());
 
