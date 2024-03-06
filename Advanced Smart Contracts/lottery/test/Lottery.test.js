@@ -70,4 +70,36 @@ describe('Lottery Contract', () => {
             assert.ok(err);
         }
     });
+
+    it('only manger can call pickWinner', async () => {
+        try {
+            await lottery.methods.pickWinner().send({
+                from: accounts[1],
+            });
+            assert(false);
+        } catch (err) {
+            assert.ok(err);
+        }
+    });
+
+    it('sends money to winner and resets', async () => {
+        await lottery.methods.enter().send({
+            from: accounts[1],
+            value: web3.utils.toWei('1', 'ether')
+        });
+
+        const initialBalance = await web3.eth.getBalance(accounts[1]);
+        await lottery.methods.pickWinner().send({
+            from: accounts[0]
+        });
+        const finalBalance = await web3.eth.getBalance(accounts[1]);
+
+        const difference = finalBalance - initialBalance;
+        assert(difference > web3.utils.toWei('.8', 'ether'));
+
+        const players = await lottery.methods.getPlayers().call({
+            from: accounts[0]
+        });
+        assert.equal(players.length, 0);
+    });
 });
